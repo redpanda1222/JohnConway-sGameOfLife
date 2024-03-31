@@ -11,9 +11,23 @@
     <script type="text/javascript" src="./util.js"></script>
     <script type="text/javascript" src="./automata.js"></script>
     <script type="text/javascript" src="./main.js"></script>
+
+    <style>
+        #button-container {
+            padding-top: 10px; /* Adjust as needed */
+        }
+
+        #start, #stop {
+            margin: 5px; /* Adjust as needed */
+        }
+    </style>
 </head>
 <body>
-    <canvas id="gameWorld" width="400" height="400" style="background: white; border: 1px solid black" tabindex="0" autofocus></canvas>
+    <div id="button-container">
+        <button id="start">Start</button>
+        <button id="stop">Stop</button>
+    </div>
+    <canvas id="gameWorld" width="600" height="600" style="background: white; border: 1px solid black" tabindex="0" autofocus></canvas>
 
     <div>
         <div id="ticks">Ticks: 0</div>
@@ -23,6 +37,7 @@
     </div>
     <div>
         <button id="random">Random</button>
+        <button id="desired">Desired Inputs</button>
     </div>
 </body>
 </html>

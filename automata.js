@@ -9,20 +9,69 @@ class Automata {
         this.tickCount = 0;
         this.ticks = 0;
 
+        this.start = false;
+        this.desired = false;
+
         this.speed = parseInt(document.getElementById("speed").value, 10);
         this.randomButton = document.getElementById("random");
-        this.randomButton.addEventListener('click', () => {
-            this.loadRandomAutomata();
-            this.game.draw();
-        });
-   
+        this.desiredButton = document.getElementById("desired");
+        this.startButton = document.getElementById("start");
+        this.stopButton = document.getElementById("stop");
+
         for (let col = 0; col < this.width; col++) {
             this.automata.push([]);
             for (let row = 0; row < this.height; row++) {
                 this.automata[col][row] = 0;
             }
         }
-        this.loadRandomAutomata();
+
+        // Get the canvas element
+        var canvas = document.getElementById("gameWorld");
+
+        // Function to handle mouse click event
+        var handleClick = (event) => {
+            // Get the mouse position relative to the canvas
+            var rect = canvas.getBoundingClientRect();
+            var mouseX = event.clientX - rect.left;
+            var mouseY = event.clientY - rect.top;
+
+            // Calculate the cell position clicked
+            var cellX = Math.floor(mouseX / 12);
+            var cellY = Math.floor(mouseY / 12);
+
+            // Output the cell position clicked
+            console.log("Clicked cell:", cellX, cellY);
+            if (this.desired) {
+                this.automata[cellX][cellY] = this.automata[cellX][cellY] == 1 ? 0 : 1;
+            }
+        };
+
+        // Add event listener for mouse click
+        canvas.addEventListener("click", handleClick);
+
+        this.startButton.addEventListener('click', () => {
+            this.start = true;
+        });
+
+        this.stopButton.addEventListener('click', () => {
+            this.start = false;
+        });
+
+        this.desiredButton.addEventListener('click', () => {
+            this.desired = true;
+            this.clearAutomata();
+            this.ticks = 0;
+            document.getElementById('ticks').innerHTML = "Ticks: " + this.ticks;
+            this.game.draw();
+        });
+
+        this.randomButton.addEventListener('click', () => {
+            this.loadRandomAutomata();
+            this.desired = false;
+            this.ticks = 0;
+            document.getElementById('ticks').innerHTML = "Ticks: " + this.ticks;
+            this.game.draw();
+        });
     };
 
     loadRandomAutomata() {
@@ -33,13 +82,80 @@ class Automata {
         }
     };
 
+    clearAutomata() {
+        for (let col = 0; col < this.width; col++) {
+            for (let row = 0; row < this.height; row++) {
+                this.automata[col][row] = 0;
+            }
+        }
+    }
+
+    count(col, row) {
+        let count = 0;
+        for (let i = -1; i < 2; i++) {
+            for (let j = -1; j < 2; j++) {
+                if ((i || j) && this.automata[col + i] && this.automata[col + i][row + j]) count++;
+            }
+        }
+        return count;
+    };
+
     update() {
-        // this.ticks++;
-        // document.getElementById('ticks').innerHTML = "Ticks: " + this.ticks;
+        if (this.start) {
+            this.desired = false;
+            this.speed = parseInt(document.getElementById("speed").value, 10);
+
+            if (this.tickCount++ >= this.speed && this.speed != 120) {
+                this.tickCount = 0;
+                this.ticks++;
+                document.getElementById('ticks').innerHTML = "Ticks: " + this.ticks;
+
+                let next = [];
+                for (let col = 0; col < this.width; col++) {
+                    next.push([]);
+                    for (let row = 0; row < this.height; row++) {
+                        next[col].push(0);
+                    }
+                }
+
+                for (let col = 0; col < this.width; col++) {
+                    for (let row = 0; row < this.height; row++) {
+                        if (this.automata[col][row] && (this.count(col, row) === 2 || this.count(col, row) === 3)) next[col][row] = 1;
+                        if (!this.automata[col][row] && this.count(col, row) === 3) next[col][row] = 1;
+                    }
+                }
+                this.automata = next;
+            }
+        }
     };
 
     draw(ctx) {
-        let size = 8;
+        // Get the canvas element
+        if (this.desired) {
+            var canvas = document.getElementById("gameWorld");
+            var ctx = canvas.getContext("2d");
+
+            // Calculate cell width and height
+            var cellWidth = canvas.width / 50;
+            var cellHeight = canvas.height / 50;
+
+            // Draw the grid
+            for (var x = 0; x <= canvas.width; x += cellWidth) {
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+            }
+
+            for (var y = 0; y <= canvas.height; y += cellHeight) {
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+            }
+
+            // Set the color and draw the grid lines
+            ctx.strokeStyle = "black";
+            ctx.stroke();
+        }
+
+        let size = 12;
         let gap = 1;
         ctx.fillStyle = "Black";
         for (let col = 0; col < this.width; col++) {
