@@ -1,10 +1,10 @@
-﻿
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>Game Project Title Goes Here</title>
-  
+
     <script type="text/javascript" src="./assetmanager.js"></script>
     <script type="text/javascript" src="./timer.js"></script>
     <script type="text/javascript" src="./gameengine.js"></script>
@@ -13,15 +13,27 @@
     <script type="text/javascript" src="./main.js"></script>
 
     <style>
-        #button-container {
-            padding-top: 10px; /* Adjust as needed */
+        body {
+            height: 100%;
+            margin: 20;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
         }
 
-        #start, #stop {
-            margin: 5px; /* Adjust as needed */
+        #button-container {
+            padding-top: 10px;
+            /* Adjust as needed */
+        }
+
+        #start,
+        #stop {
+            margin: 5px;
+            /* Adjust as needed */
         }
     </style>
 </head>
+
 <body>
     <div id="button-container">
         <button id="start">Start</button>
@@ -29,7 +41,8 @@
         <input type="checkbox" id="checkbox">
         <label for="checkbox" id="checkbox-description">Edit Cell</label>
     </div>
-    <canvas id="gameWorld" width="600" height="600" style="background: white; border: 1px solid black" tabindex="0" autofocus></canvas>
+    <canvas id="gameWorld" width="600" height="600" style="background: white; border: 1px solid black" tabindex="0"
+        autofocus></canvas>
 
     <div>
         <div id="ticks">Ticks: 0</div>
@@ -40,6 +53,10 @@
     <div>
         <button id="random">Random</button>
         <button id="desired">Desired Inputs</button>
+        <button id="alienFace">Alien Face</button>
+        <button id="coolPattern1">Cool pattern 1</button>
+        <button id="test">Testing</button>
     </div>
 </body>
+
 </html>

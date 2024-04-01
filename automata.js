@@ -17,6 +17,9 @@ class Automata {
         this.speed = parseInt(document.getElementById("speed").value, 10);
         this.randomButton = document.getElementById("random");
         this.desiredButton = document.getElementById("desired");
+        this.alienFaceButton = document.getElementById("alienFace");
+        this.coolPattern1Button = document.getElementById("coolPattern1");
+        this.testButton = document.getElementById("test");
         this.startButton = document.getElementById("start");
         this.stopButton = document.getElementById("stop");
         this.checkBox = document.getElementById("checkbox");
@@ -28,6 +31,26 @@ class Automata {
             }
         }
 
+        this.addEvents();
+    };
+
+    loadRandomAutomata() {
+        for (let col = 0; col < this.width; col++) {
+            for (let row = 0; row < this.height; row++) {
+                this.automata[col][row] = randomInt(2);
+            }
+        }
+    };
+
+    clearAutomata() {
+        for (let col = 0; col < this.width; col++) {
+            for (let row = 0; row < this.height; row++) {
+                this.automata[col][row] = 0;
+            }
+        }
+    }
+
+    addEvents() {
         // Get the canvas element
         var canvas = document.getElementById("gameWorld");
 
@@ -63,18 +86,67 @@ class Automata {
 
         this.desiredButton.addEventListener('click', () => {
             this.desired = true;
+            this.start = false;
             this.clearAutomata();
             this.ticks = 0;
             document.getElementById('ticks').innerHTML = "Ticks: " + this.ticks;
             this.game.draw();
         });
 
+        this.alienFaceButton.addEventListener('click', () => {
+            this.desired = false;
+            this.start = false;
+            this.clearAutomata();
+            this.ticks = 0;
+            document.getElementById('ticks').innerHTML = "Ticks: " + this.ticks;
+            for (let col = 0; col < this.width; col++) {
+                this.automata[col][0] = 1;
+            }
+            this.game.draw();
+        });
+
         this.randomButton.addEventListener('click', () => {
             this.loadRandomAutomata();
             this.desired = false;
+            this.start = false;
             this.ticks = 0;
             document.getElementById('ticks').innerHTML = "Ticks: " + this.ticks;
             this.desired = this.checkBox.checked;
+            this.game.draw();
+        });
+
+        this.coolPattern1Button.addEventListener('click', () => {
+            this.desired = false;
+            this.start = false;
+            this.clearAutomata();
+            this.ticks = 0;
+            document.getElementById('ticks').innerHTML = "Ticks: " + this.ticks;
+            for (let col = 0; col < this.width; col++) {
+                for (let row = 0; row < this.height; row++) {
+                    if (col % 2 == 0) {
+                        if (row % 2 == 0) {
+                            this.automata[col][row] = 1;
+                        }
+                    } else {
+                        if (row % 2 == 1) {
+                            this.automata[col][row] = 1;
+                        }
+                    }
+                }
+            }
+            this.game.draw();
+        });
+
+        this.testButton.addEventListener('click', () => {
+            this.desired = false;
+            this.start = false;
+            this.clearAutomata();
+            this.ticks = 0;
+            document.getElementById('ticks').innerHTML = "Ticks: " + this.ticks;
+            for (let col = 0; col < this.width; col++) {
+                this.automata[col][0 + col] = 1;
+                this.automata[col][this.height - 1 - col] = 1;
+            }
             this.game.draw();
         });
 
@@ -86,22 +158,6 @@ class Automata {
             }
             console.log(this.editCell);
         });
-    };
-
-    loadRandomAutomata() {
-        for (let col = 0; col < this.width; col++) {
-            for (let row = 0; row < this.height; row++) {
-                this.automata[col][row] = randomInt(2);
-            }
-        }
-    };
-
-    clearAutomata() {
-        for (let col = 0; col < this.width; col++) {
-            for (let row = 0; row < this.height; row++) {
-                this.automata[col][row] = 0;
-            }
-        }
     }
 
     count(col, row) {
@@ -158,8 +214,8 @@ class Automata {
             var ctx = canvas.getContext("2d");
 
             // Calculate cell width and height
-            var cellWidth = canvas.width / 50;
-            var cellHeight = canvas.height / 50;
+            var cellWidth = canvas.width / this.width;
+            var cellHeight = canvas.height / this.height;
 
             // Draw the grid
             for (var x = 0; x <= canvas.width; x += cellWidth) {
