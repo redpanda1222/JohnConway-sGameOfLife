@@ -94,7 +94,7 @@ class Automata {
         });
 
         this.alienFaceButton.addEventListener('click', () => {
-            this.desired = false;
+            this.desired = this.checkBox.checked;
             this.start = false;
             this.clearAutomata();
             this.ticks = 0;
@@ -107,7 +107,7 @@ class Automata {
 
         this.randomButton.addEventListener('click', () => {
             this.loadRandomAutomata();
-            this.desired = false;
+            this.desired = this.checkBox.checked;
             this.start = false;
             this.ticks = 0;
             document.getElementById('ticks').innerHTML = "Ticks: " + this.ticks;
@@ -116,7 +116,7 @@ class Automata {
         });
 
         this.coolPattern1Button.addEventListener('click', () => {
-            this.desired = false;
+            this.desired = this.checkBox.checked;
             this.start = false;
             this.clearAutomata();
             this.ticks = 0;
@@ -138,7 +138,7 @@ class Automata {
         });
 
         this.testButton.addEventListener('click', () => {
-            this.desired = false;
+            this.desired = this.checkBox.checked;
             this.start = false;
             this.clearAutomata();
             this.ticks = 0;
@@ -156,7 +156,6 @@ class Automata {
             } else {
                 this.desired = false;
             }
-            console.log(this.editCell);
         });
     }
 
