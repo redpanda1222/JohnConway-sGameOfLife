@@ -5,18 +5,21 @@ class Automata {
         this.automata = [];
         this.height = 50;
         this.width = 50;
+        this.size = 12;
 
         this.tickCount = 0;
         this.ticks = 0;
 
         this.start = false;
         this.desired = false;
+        this.editCell = false;
 
         this.speed = parseInt(document.getElementById("speed").value, 10);
         this.randomButton = document.getElementById("random");
         this.desiredButton = document.getElementById("desired");
         this.startButton = document.getElementById("start");
         this.stopButton = document.getElementById("stop");
+        this.checkBox = document.getElementById("checkbox");
 
         for (let col = 0; col < this.width; col++) {
             this.automata.push([]);
@@ -36,11 +39,11 @@ class Automata {
             var mouseY = event.clientY - rect.top;
 
             // Calculate the cell position clicked
-            var cellX = Math.floor(mouseX / 12);
-            var cellY = Math.floor(mouseY / 12);
+            var cellX = Math.floor(mouseX / this.size);
+            var cellY = Math.floor(mouseY / this.size);
 
             // Output the cell position clicked
-            console.log("Clicked cell:", cellX, cellY);
+            //console.log("Clicked cell:", cellX, cellY);
             if (this.desired) {
                 this.automata[cellX][cellY] = this.automata[cellX][cellY] == 1 ? 0 : 1;
             }
@@ -55,6 +58,7 @@ class Automata {
 
         this.stopButton.addEventListener('click', () => {
             this.start = false;
+            this.desired = this.checkBox.checked;
         });
 
         this.desiredButton.addEventListener('click', () => {
@@ -70,7 +74,17 @@ class Automata {
             this.desired = false;
             this.ticks = 0;
             document.getElementById('ticks').innerHTML = "Ticks: " + this.ticks;
+            this.desired = this.checkBox.checked;
             this.game.draw();
+        });
+
+        this.checkBox.addEventListener("change", (event) => {
+            if (event.target.checked) {
+                this.desired = true;
+            } else {
+                this.desired = false;
+            }
+            console.log(this.editCell);
         });
     };
 
@@ -92,9 +106,17 @@ class Automata {
 
     count(col, row) {
         let count = 0;
-        for (let i = -1; i < 2; i++) {
-            for (let j = -1; j < 2; j++) {
-                if ((i || j) && this.automata[col + i] && this.automata[col + i][row + j]) count++;
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                // Check if the cell is within the bounds of the grid
+                if (col - 1 + j >= 0 && col - 1 + j < this.width && row - 1 + i >= 0 && row - 1 + i < this.height) {
+                    // Check if the current cell is not the center cell
+                    if (!(j === 1 && i === 1)) {
+                        if (this.automata[col - 1 + j][row - 1 + i]) {
+                            count++;
+                        }
+                    }
+                }
             }
         }
         return count;
@@ -102,7 +124,7 @@ class Automata {
 
     update() {
         if (this.start) {
-            this.desired = false;
+            this.desired = false; // set desired to flase to remove gird
             this.speed = parseInt(document.getElementById("speed").value, 10);
 
             if (this.tickCount++ >= this.speed && this.speed != 120) {
@@ -155,13 +177,12 @@ class Automata {
             ctx.stroke();
         }
 
-        let size = 12;
         let gap = 1;
         ctx.fillStyle = "Black";
         for (let col = 0; col < this.width; col++) {
             for (let row = 0; row < this.height; row++) {
                 let cell = this.automata[col][row];
-                if (cell) ctx.fillRect(col * size + gap, row * size + gap, size - 2 * gap, size - 2 * gap);
+                if (cell) ctx.fillRect(col * this.size + gap, row * this.size + gap, this.size - 2 * gap, this.size - 2 * gap);
             }
         }
     };
